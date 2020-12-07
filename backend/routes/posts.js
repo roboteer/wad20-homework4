@@ -36,14 +36,26 @@ router.post('/', authorize,  (request, response) => {
         text: request.body.text,
         media: request.body.media
         }, () => {
-            response.status(201).json()
+            //response.status(201).json()
+            response.json({
+                ok: true
+            })
         });
 });
 
 
+//Task 2
 router.put('/:postId/likes', authorize, (request, response) => {
 
     // Endpoint for current user to like a post
+    console.log('PUT A LIKE')
+    console.log(request.body);
+    PostModel.like(request.currentUser.id, request.params.postId,
+        () => {
+            response.json({
+                ok: true
+            })
+        });
 });
 
 router.delete('/:postId/likes', authorize, (request, response) => {
