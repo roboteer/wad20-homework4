@@ -22,10 +22,22 @@ router.get('/', authorize, (request, response) => {
 
 });
 
+// Task 1
 router.post('/', authorize,  (request, response) => {
 
     // Endpoint to create a new post
+    console.log("NEW POST HAS ARRIVED");
+    console.log(request.body);
+    console.log(request.currentUser);
 
+    PostModel.create(
+        {
+        userId: request.currentUser.id,
+        text: request.body.text,
+        media: request.body.media
+        }, () => {
+            response.status(201).json()
+        });
 });
 
 
