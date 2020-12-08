@@ -96,11 +96,33 @@ jest.mock("axios", () => ({
     })
 }));
 
+
+//Test that exactly as many posts are rendered as contained in testData variable
+//Test that if post has media property, image or video tags are rendered depending on media.type property, or if media property is absent nothing is rendered.
+//Test that post create time is displayed in correct format: Saturday, December 5, 2020 1:53 PM
 describe('Posts', () => {
 
     const wrapper = mount(Posts, {router, store, localVue});
+    
 
-    it('1 == 1', function () {
+    it('renders the correct amount of posts', () => {
+        let expectedPostCount = testData.length
+        
+        let posts = wrapper.findAll('.main-container .post')
+        let realPostCount = posts.length
+        
+        expect(expectedPostCount).toBe(realPostCount)
+    })
+
+    it('renders image or video tags depending on media.type property', () => {
+        let posts = wrapper.findAll('.main-container .post')
+
+        console.log(posts.at(0))
+
+        for (let i=0; i< posts.length; i++){
+            console.log(posts.at(i).find('.post-image'))
+        }
         expect(true).toBe(true)
-    });
+    })
+
 });
