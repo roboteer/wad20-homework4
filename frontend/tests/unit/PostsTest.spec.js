@@ -2,6 +2,7 @@ import {mount, createLocalVue} from '@vue/test-utils'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import Posts from "../../src/components/Posts.vue";
+import moment from 'moment'
 
 const localVue = createLocalVue();
 
@@ -35,6 +36,7 @@ const routes = [
         name: 'profiles'
     }
 ];
+
 
 const router = new VueRouter({routes});
 
@@ -97,9 +99,7 @@ jest.mock("axios", () => ({
 }));
 
 
-//Test that exactly as many posts are rendered as contained in testData variable
-//Test that if post has media property, image or video tags are rendered depending on media.type property, or if media property is absent nothing is rendered.
-//Test that post create time is displayed in correct format: Saturday, December 5, 2020 1:53 PM
+// Task #4
 describe('Posts', () => {
 
     const wrapper = mount(Posts, {router, store, localVue});
@@ -111,18 +111,43 @@ describe('Posts', () => {
         let posts = wrapper.findAll('.main-container .post')
         let realPostCount = posts.length
         
-        expect(expectedPostCount).toBe(realPostCount)
+        expect(expectedPostCount).toEqual(realPostCount)
     })
 
     it('renders image or video tags depending on media.type property', () => {
         let posts = wrapper.findAll('.main-container .post')
-
-        console.log(posts.at(0))
-
         for (let i=0; i< posts.length; i++){
-            console.log(posts.at(i).find('.post-image'))
+            let post = posts.at(i)
+            let postImage = post.find('.post-image')
+            let hasPostImage = postImage.exists()
+            if(testData[i].media==null){
+                expect(hasPostImage).toBe(false)
+            }else{
+                expect(hasPostImage).toBe(true)
+                let hasImage = postImage.find('img').exists()
+                let hasVideo = postImage.find('video').exists()
+                if(testData[i].media.type=="image"){
+                    expect(hasImage).toBe(true)
+                    expect(hasVideo).toBe(false)
+                }else if(testData[i].media.type=="video"){
+                    expect(hasVideo).toBe(true)
+                    expect(hasImage).toBe(false)
+                }
+            }
+           
         }
-        expect(true).toBe(true)
     })
+
+    it('renders post create time in correct format: Saturday, December 5, 2020 1:53 PM', () => {
+        let posts = wrapper.findAll('.main-container .post')
+        let posts_dates = wrapper.findAll('.main-container .post .post-author > small')
+        for (let i=0; i<posts_dates.length; i++){
+            let renderedDate = posts_dates.at(i).text()
+            let expectedDate = moment(testData[i].createTime).format('LLLL')
+            expect(expectedDate).toEqual(renderedDate)
+        }
+        
+    })
+
 
 });
