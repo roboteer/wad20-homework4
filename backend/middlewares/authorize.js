@@ -14,8 +14,10 @@ module.exports = (request, response, next) => {
         token = request.headers.authorization.replace("Bearer ","");
         
         decodedUser = jwt.verifyAccessToken(token)
-        UserModel.getById(1, (user) => {
-            request.currentUser = decodedUser;
+        userId = decodedUser.id
+
+        UserModel.getById(userId, (user) => {
+            request.currentUser = user;
             next();
         });
     } else {
